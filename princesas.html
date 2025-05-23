@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Stickers de Princesas- DBR Stickers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #FF5733; /* Naranja vibrante */
+            --secondary-color: #33FF57; /* Verde lima */
+            --accent-color: #3357FF; /* Azul eléctrico */
+            --text-dark: #2c3e50; /* Azul oscuro casi negro */
+            --text-light: #ecf0f1; /* Gris claro */
+            --card-bg: #ffffff; /* Fondo de tarjetas */
+            --hover-red: #E63946; /* Rojo para hover de botón */
+            --whatsapp-green: #25d366;
+            --whatsapp-dark-green: #128c7e;
+            --button-color: #6c5ce7; /* Morado suave para botones */
+            --button-hover: #5c4ce3;
+            --delete-button: #e74c3c;
+            --delete-button-hover: #c0392b;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Encabezado */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .header-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            /* Removed margin-right: auto; to center the title if no other elements are next to it,
+               or adjust justify-content in .header if you want it aligned left */
+        }
+
+        /* The .cart-icon-container and .cart-count CSS rules are no longer needed
+           since the corresponding HTML elements are removed. */
+
+        /* Estilos específicos para los paquetes */
+        .package-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .package-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            padding: 25px;
+            text-align: center;
+            width: 280px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .package-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .package-card h2 {
+            color: var(--accent-color);
+            margin-top: 0;
+            font-size: 1.8rem;
+        }
+
+        .package-card .price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+
+        .package-card ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .package-card ul li {
+            margin-bottom: 10px;
+            font-size: 1rem;
+            color: var(--text-dark);
+        }
+
+        .package-card .add-to-cart-btn {
+            background-color: var(--button-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        .package-card .add-to-cart-btn:hover {
+            background-color: var(--button-hover);
+        }
+
+        /* --- Modal del Carrito --- */
+        .cart-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cart-modal-content {
+            background-color: var(--bg-light);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .cart-modal-content h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            color: var(--accent-color);
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .cart-items {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-details {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        .cart-item-details img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+
+        .cart-item-info {
+            flex-grow: 1;
+        }
+
+        .cart-item-info h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--text-dark);
+        }
+
+        .cart-item-info p {
+            margin: 5px 0 0;
+            font-size: 0.95rem;
+            color: #7f8c8d;
+        }
+
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-right: 15px;
+        }
+
+        .quantity-btn {
+            background-color: var(--button-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .quantity-btn:hover {
+            background-color: var(--button-hover);
+        }
+
+        .remove-item-btn {
+            background-color: var(--delete-button);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .remove-item-btn:hover {
+            background-color: var(--delete-button-hover);
+        }
+
+        .cart-total {
+            text-align: right;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid #eee;
+        }
+
+        .cart-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .close-modal-btn, .checkout-whatsapp-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-modal-btn:hover, .checkout-whatsapp-btn:hover {
+            background-color: #2a4acb;
+        }
+
+        .empty-cart-message {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+            padding: 20px;
+            font-size: 1.1rem;
+        }
+
+        /* Media Queries para responsividad */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column; /* Changed to column to center the title better if no other elements */
+                align-items: center;
+                justify-content: center; /* Center horizontally */
+                width: 100%;
+            }
+            .header-title {
+                font-size: 2.5rem;
+                text-align: center; /* Center the title text */
+                margin: 0; /* Remove specific margins */
+            }
+            .package-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .package-card {
+                width: 90%;
+                max-width: 300px;
+            }
+            .cart-modal-content {
+                width: 95%;
+                padding: 15px;
+            }
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .cart-item-details {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            .cart-item-quantity {
+                width: 100%;
+                justify-content: center;
+                margin-right: 0;
+            }
+            .remove-item-btn {
+                align-self: flex-end;
+                margin-top: -30px;
+                margin-right: 5px;
+            }
+            .cart-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            .close-modal-btn, .checkout-whatsapp-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="main-content">
+        <div class="header">
+            <h1 class="header-title">Stickers de Princesas</h1>
+            </div>
+
+        <div class="package-container">
+            <div class="package-card" data-id="objetos_sencillo" data-name="Paquete Sencillo Objetos" data-price="15.00" data-image="https://via.placeholder.com/150x100/FFBD33/fff?text=Objetos+Sencillo">
+                <h2>Paquete Sencillo</h2>
+                <p class="price">$15 MXN</p>
+                <ul>
+                    <li>✅ 5 Stickers Variados</li>
+                    <li>✅ Diseño estándar</li>
+                </ul>
+                <button class="add-to-cart-btn">Agregar al Carrito</button>
+            </div>
+
+            <div class="package-card" data-id="objetos_normal" data-name="Paquete Normal Objetos" data-price="20.00" data-image="https://via.placeholder.com/150x100/33FF57/fff?text=Objetos+Normal">
+                <h2>Paquete Normal</h2>
+                <p class="price">$20 MXN</p>
+                <ul>
+                    <li>✅ 10 Stickers Variados</li>
+                    <li>✅ Diseño estándar o personalizado</li>
+                </ul>
+                <button class="add-to-cart-btn">Agregar al Carrito</button>
+            </div>
+
+            <div class="package-card" data-id="objetos_grande" data-name="Paquete Grande Objetos" data-price="30.00" data-image="https://via.placeholder.com/150x100/FF5733/fff?text=Objetos+Grande">
+                <h2>Paquete Grande</h2>
+                <p class="price">$30 MXN</p>
+                <ul>
+                    <li>✅ 15 Stickers Variados</li>
+                    <li>✅ Diseño personalizado exclusivo</li>
+                </ul>
+                <button class="add-to-cart-btn">Agregar al Carrito</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="cart-modal-overlay" id="cartModalOverlay">
+        <div class="cart-modal-content">
+            <h3>Tu Carrito de Compras</h3>
+            <ul class="cart-items" id="cartItemsList">
+                </ul>
+            <p class="empty-cart-message" id="emptyCartMessage">El carrito está vacío.</p>
+            <div class="cart-total">
+                Total: <span id="cartTotal">$0.00</span>
+            </div>
+            <div class="cart-actions">
+                <button class="close-modal-btn" id="closeCartModal">Cerrar</button>
+                <button class="checkout-whatsapp-btn" id="checkoutWhatsappBtn">Proceder al Pedido (WhatsApp)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // *** IMPORTANTE: REEMPLAZA ESTE NÚMERO POR TU NÚMERO DE TELÉFONO REAL CON CÓDIGO DE PAÍS, SIN SÍMBOLOS (+, espacios, guiones) ***
+        const WHATSAPP_NUMBER = '5219211234567'; // Ejemplo: para México, si tu número es 9211234567
+
+        // Función para obtener el carrito desde localStorage
+        function getCart() {
+            const cartJSON = localStorage.getItem('cartDBR');
+            return cartJSON ? JSON.parse(cartJSON) : [];
+        }
+
+        // Función para guardar el carrito en localStorage
+        function saveCart(cart) {
+            localStorage.setItem('cartDBR', JSON.stringify(cart));
+            // Removed updateCartUI() call here because the cart count icon is gone.
+            // The cart UI will still update when the modal is opened.
+        }
+
+        // Función para añadir un ítem al carrito
+        function addToCart(item) {
+            let cart = getCart();
+            const existingItemIndex = cart.findIndex(cartItem => cartItem.id === item.id);
+
+            if (existingItemIndex > -1) {
+                // Si el ítem ya existe, aumenta la cantidad
+                cart[existingItemIndex].quantity++;
+            } else {
+                // Si el ítem no existe, agrégalo con cantidad 1
+                cart.push({ ...item, quantity: 1 });
+            }
+            saveCart(cart);
+            alert(`"${item.name}" ha sido añadido al carrito.`); // Opcional: una pequeña confirmación
+        }
+
+        // Función para actualizar la cantidad de un ítem
+        function updateCartItemQuantity(itemId, change) {
+            let cart = getCart();
+            const itemIndex = cart.findIndex(item => item.id === itemId);
+
+            if (itemIndex > -1) {
+                cart[itemIndex].quantity += change;
+                if (cart[itemIndex].quantity <= 0) {
+                    // Eliminar el ítem si la cantidad es 0 o menos
+                    cart.splice(itemIndex, 1);
+                }
+            }
+            saveCart(cart);
+        }
+
+        // Función para eliminar un ítem del carrito
+        function removeFromCart(itemId) {
+            let cart = getCart();
+            cart = cart.filter(item => item.id !== itemId);
+            saveCart(cart);
+        }
+
+        // Función para renderizar los ítems del carrito en el modal
+        function renderCartItems() {
+            const cartItemsList = document.getElementById('cartItemsList');
+            const cartTotalSpan = document.getElementById('cartTotal');
+            const emptyCartMessage = document.getElementById('emptyCartMessage');
+            const cart = getCart();
+            let total = 0;
+
+            cartItemsList.innerHTML = ''; // Limpiar la lista actual
+
+            if (cart.length === 0) {
+                emptyCartMessage.style.display = 'block';
+                cartTotalSpan.textContent = '$0.00';
+            } else {
+                emptyCartMessage.style.display = 'none';
+                cart.forEach(item => {
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('cart-item');
+                    listItem.innerHTML = `
+                        <div class="cart-item-details">
+                            <img src="${item.image}" alt="${item.name}">
+                            <div class="cart-item-info">
+                                <h4>${item.name}</h4>
+                                <p>$${item.price.toFixed(2)} c/u</p>
+                            </div>
+                        </div>
+                        <div class="cart-item-quantity">
+                            <button class="quantity-btn decrease" data-id="${item.id}">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="quantity-btn increase" data-id="${item.id}">+</button>
+                        </div>
+                        <button class="remove-item-btn" data-id="${item.id}"><i class="fas fa-times"></i></button>
+                    `;
+                    cartItemsList.appendChild(listItem);
+
+                    total += item.price * item.quantity;
+                });
+            }
+
+            cartTotalSpan.textContent = `$${total.toFixed(2)}`;
+        }
+
+        // The updateCartUI function is simplified as it only needs to render items now.
+        function updateCartUI() {
+            renderCartItems();
+        }
+
+        // --- Event Listeners ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // No initial updateCartUI call needed for the header icon anymore.
+            // renderCartItems() will be called when the modal is opened.
+
+            // Abrir/Cerrar Modal del Carrito (The modal can no longer be opened via an icon.
+            // If you still want the modal, you'll need another trigger, e.g., a "Ver Carrito" button.)
+            // For now, I'm commenting out the modal opening logic related to the icon.
+            const cartModalOverlay = document.getElementById('cartModalOverlay');
+            // const openCartModalBtn = document.getElementById('openCartModal'); // This element is removed
+            const closeCartModalBtn = document.getElementById('closeCartModal');
+
+            // If you want to keep the modal functionality, you'll need a new button
+            // somewhere else on the page to trigger this. For now, the modal will
+            // only be openable if you add a new element with id="openCartModal"
+            // or modify this part to be triggered differently.
+            // openCartModalBtn.addEventListener('click', (e) => {
+            //     e.preventDefault();
+            //     cartModalOverlay.style.display = 'flex';
+            //     renderCartItems();
+            // });
+
+            closeCartModalBtn.addEventListener('click', () => {
+                cartModalOverlay.style.display = 'none';
+            });
+
+            cartModalOverlay.addEventListener('click', (e) => {
+                if (e.target === cartModalOverlay) {
+                    cartModalOverlay.style.display = 'none';
+                }
+            });
+
+            // Añadir al Carrito (delegación de eventos) - This remains the same
+            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const card = e.target.closest('.package-card');
+                    const item = {
+                        id: card.dataset.id,
+                        name: card.dataset.name,
+                        price: parseFloat(card.dataset.price),
+                        image: card.dataset.image
+                    };
+                    addToCart(item);
+                });
+            });
+
+            // Manejar cambios en el carrito (aumentar/disminuir/eliminar) usando delegación de eventos
+            document.getElementById('cartItemsList').addEventListener('click', (e) => {
+                if (e.target.classList.contains('increase')) {
+                    const itemId = e.target.dataset.id;
+                    updateCartItemQuantity(itemId, 1);
+                } else if (e.target.classList.contains('decrease')) {
+                    const itemId = e.target.dataset.id;
+                    updateCartItemQuantity(itemId, -1);
+                } else if (e.target.classList.contains('remove-item-btn') || e.target.closest('.remove-item-btn')) {
+                    const itemId = e.target.dataset.id || e.target.closest('.remove-item-btn').dataset.id;
+                    removeFromCart(itemId);
+                }
+            });
+
+            // Botón de WhatsApp para el pedido - This remains the same
+            const checkoutWhatsappBtn = document.getElementById('checkoutWhatsappBtn');
+            checkoutWhatsappBtn.addEventListener('click', () => {
+                const cart = getCart();
+                if (cart.length === 0) {
+                    alert('Tu carrito está vacío. ¡Añade algunos stickers antes de proceder!');
+                    return;
+                }
+
+                let message = "¡Hola! Estoy interesado en los siguientes paquetes de stickers de DBR:\n\n";
+                let total = 0;
+
+                cart.forEach((item, index) => {
+                    message += `${index + 1}. *${item.name}* - Cantidad: ${item.quantity} - Precio unitario: $${item.price.toFixed(2)}\n`;
+                    total += item.price * item.quantity;
+                });
+
+                message += `\n*Total estimado: $${total.toFixed(2)}*\n`;
+                message += "Por favor, contáctenme para finalizar mi pedido.";
+
+                // Codificar el mensaje para la URL de WhatsApp
+                const encodedMessage = encodeURIComponent(message);
+                const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+
+                window.open(whatsappURL, '_blank');
+            });
+        });
+    </script>
+</body>
+</html>

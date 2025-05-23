@@ -1,0 +1,78 @@
+<script>
+  const WHATSAPP_NUMBER = "529213040678"; // Número correcto
+
+  function getCart() {
+    const cart = localStorage.getItem('cartDBR');
+    return cart ? JSON.parse(cart) : [];
+  }
+
+  function saveCart(cart) {
+    localStorage.setItem('cartDBR', JSON.stringify(cart));
+  }
+
+  function addToCart(item) {
+    const cart = getCart();
+    const index = cart.findIndex(i => i.id === item.id);
+    if (index > -1) {
+      cart[index].quantity += 1;
+    } else {
+      cart.push({ ...item, quantity: 1 });
+    }
+    saveCart(cart);
+    alert("Producto agregado al carrito.");
+  }
+
+  function renderCart() {
+    const cart = getCart();
+    const cartItemsList = document.getElementById("cartItemsList");
+    const cartTotal = document.getElementById("cartTotal");
+    cartItemsList.innerHTML = "";
+    let total = 0;
+
+    cart.forEach((item, index) => {
+      const li = document.createElement("li");
+      li.className = "cart-item";
+      li.innerHTML = `
+        <span><strong>${item.name}</strong> (x${item.quantity})</span>
+        <span>$${(item.quantity * item.price).toFixed(2)}</span>
+      `;
+      cartItemsList.appendChild(li);
+      total += item.price * item.quantity;
+    });
+
+    cartTotal.innerText = `$${total.toFixed(2)}`;
+  }
+
+  function openCart() {
+    document.getElementById("cartModalOverlay").style.display = "flex";
+    renderCart();
+  }
+
+  function closeCart() {
+    document.getElementById("cartModalOverlay").style.display = "none";
+  }
+
+  function checkoutWhatsapp() {
+    const cart = getCart();
+    if (cart.length === 0) {
+      alert("Tu carrito está vacío.");
+      return;
+    }
+
+    let message = "¡Hola! Quiero pedir estos stickers:%0A";
+    let total = 0;
+
+    cart.forEach((item, index) => {
+      message += `${index + 1}. ${item.name} x${item.quantity} - $${item.price.toFixed(2)} c/u%0A`;
+      total += item.price * item.quantity;
+    });
+
+    message += `%0ATotal: $${total.toFixed(2)}%0AGracias.`;
+
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank");
+  }
+
+  // Puedes usar este ejemplo para agregar productos desde otra página:
+  // addToCart({ id: "sticker_1", name: "Sticker Ejemplo", price: 15.0 });
+</script>
